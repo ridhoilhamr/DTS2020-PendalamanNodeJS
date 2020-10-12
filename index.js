@@ -40,14 +40,29 @@ app.get('/product', async (req, res, next) => {
 
 
 // get product list
-app.get('/add-product', (req, res, next) => {
-  res.send(req.query)
+app.get('/add-product', async (req, res, next) => {
+  //   getProduct(db).then(product => {
+  //   console.log('Product Result', product)
+  //   res.render('product')
+  // }).catch(error => {
+  //   console.error(error)
+  // })
+
+  let products
+  try {
+    products = await getProduct(db)
+  } catch (error) {
+    return next(error)
+  }
+
+  res.render('product', { products })
 })
+
 
 // handle form POST method
 app.post('/add-product', (req, res, next) => {
   console.log('Request', req.body)
-  
+
 // insert product
   insertProduct(db, req.body.name, parseInt(req.body.price), '-')
   
