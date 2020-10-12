@@ -4,10 +4,17 @@ import path from 'path'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
 
+//const database = require('./database')
+import { initDatabase, initTable, insertProduct, getProduct } from './database.js'
+
 const __dirname = path.resolve()
 
-//initialize express
 const app = express()
+const db = initDatabase()
+initTable(db)
+
+// //initialize express
+// const app = express()
 
 app.set('views', __dirname + '/layouts')
 app.set('view engine', 'html')
@@ -32,7 +39,7 @@ app.get('/product', async (req, res, next) => {
 })
 
 
-// handle form GET method
+// get product list
 app.get('/add-product', (req, res, next) => {
   res.send(req.query)
 })
@@ -40,7 +47,12 @@ app.get('/add-product', (req, res, next) => {
 // handle form POST method
 app.post('/add-product', (req, res, next) => {
   console.log('Request', req.body)
-  res.send(req.body)
+  
+// insert product
+  insertProduct(db, req.body.name, parseInt(req.body.price), '-')
+  
+// redirect
+res.redirect('/product')
 })
 
 //send error message
